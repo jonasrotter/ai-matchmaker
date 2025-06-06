@@ -1,0 +1,7 @@
+openai
+tenacity
+tqdm
+numpy
+typing
+tiktoken
+concurrent
