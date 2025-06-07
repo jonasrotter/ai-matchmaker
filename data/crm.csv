@@ -1,0 +1,4 @@
+customer_id,name,email,loyalty_status,preferred_colors,preferred_sizes
+C001,Alice Smith,alice@example.com,Gold,"blue,black","M,L"
+C002,Bob Johnson,bob@example.com,Silver,"red,white",L
+C003,Carol Davis,carol@example.com,Platinum,"green,black","S,M"

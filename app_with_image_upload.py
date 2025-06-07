@@ -2,18 +2,16 @@
 import streamlit as st
 import pandas as pd
 from PIL import Image
-import json
-from model import analyze_image, encoded_image 
 
 # Load Q&A data
 @st.cache_data
 def load_qa():
-    df = pd.read_csv("data/sample_styles.csv")
+    df = pd.read_csv("retail_store_employee_qna_reordered.csv")
     return df
 
 df = load_qa()
 
-st.title("🛍️ Retail Store Assistant")
+st.title("🛍️ Retail Store Employee Assistant")
 
 # Image upload
 uploaded_file = st.file_uploader("Upload a customer image (optional):", type=["jpg", "jpeg", "png"])
@@ -26,12 +24,12 @@ query = st.text_input("Ask a customer question:")
 
 if query:
     # Simple search (case-insensitive substring match)
-        # Select the unique subcategories from the DataFrame
-    unique_subcategories = df['articleType'].unique()
+    results = df[df["Question"].str.lower().str.contains(query.lower())]
 
-    # Analyze the image and return the results
-    encoded_image = encode_image_to_base64(reference_image)
-    analysis = analyze_image(encoded_image, unique_subcategories)
-    image_analysis = json.loads(analysis)
-
-    st.markdown(image_analysis)
+    if not results.empty:
+        for _, row in results.iterrows():
+            st.markdown(f"**Q:** {row['Question']}")
+            st.markdown(f"**A:** {row['Answer']}")
+            st.markdown("---")
+    else:
+        st.info("Sorry, I couldn't find an answer to that question.")
