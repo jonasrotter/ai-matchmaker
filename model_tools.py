@@ -20,6 +20,7 @@ from IPython.display import Image, display, HTML
 from typing import List
 from dotenv import load_dotenv
 import os
+from sqlalchemy import create_engine, MetaData, Table
 
 # Load environment variables
 load_dotenv()
@@ -32,7 +33,18 @@ connection_params = {
     "user": os.getenv('DB_USER'),
     "password": os.getenv('DB_PASSWORD')
 }
-pos_schema = get_pg_schema(connection_params, "pos")
+
+# Create a SQLAlchemy engine using environment variables
+engine = create_engine(
+    f"postgresql://{connection_params['user']}:{connection_params['password']}@"
+    f"{connection_params['host']}:{connection_params['port']}/{connection_params['dbname']}"
+)
+
+# Get the schema for the pos table
+pos_schema = get_pg_schema("pos", engine=engine)
+#erp_schema = get_pg_schema("erp")
+#crm_schema = get_pg_schema("crm")
+#products_schema = get_pg_schema("products", engine)
 
 # OpenAI Client Setup
 GPT_MODEL = "gpt-4o-mini"
@@ -170,11 +182,12 @@ def model_tools(user_prompt: str):
 
 
 def main ():
+    print(engine)
     messages = []
     messages.append({"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."})
     a="Is there Wifi in the store?"
     b= "What is the stock for product 123 in store A?"
-    c= "What is the sales summary for product 456?"
+    c= "What is the sales summary for product 34586?"
     d= "What are the customer preferences for John Doe?"
 
     # Step #1: Prompt with content that may result in function call. In this case the model can identify the information requested by the user is potentially available in the database schema passed to the model in Tools description. 
@@ -189,21 +202,24 @@ def main ():
 
     assistant_message = response.choices[0].message
     messages.append(assistant_message)
-    print(assistant_message)
+
 
     # Step 2: determine if the response from the model includes a tool call.   
     tool_calls = assistant_message.tool_calls
+    print(f"Tool calls: {tool_calls}")
     if tool_calls:
         # If true the model will return the name of the tool / function to call and the argument(s)  
         tool_call_id = tool_calls[0].id
         tool_function_name = tool_calls[0].function.name
-        
-        tool_function_name
+        tool_query_string = json.loads(tool_calls[0].function.arguments)['query']
+        print(f"Tool call ID: {tool_call_id}")
+        print(f"Tool function name: {tool_function_name}")
+        print(f"Tool query string: {tool_query_string}")
 
         # Step 3: Call the function and retrieve results. Append the results to the messages list.      
         if tool_function_name == 'get_pos':
-            results = get_pos()  
-            
+            results = get_pos(tool_query_string, engine)
+            print(f"Results: {results.head()}")
             messages.append({
                 "role":"tool", 
                 "tool_call_id":tool_call_id, 
@@ -213,11 +229,11 @@ def main ():
             
             # Step 4: Invoke the chat completions API with the function response appended to the messages list
             # Note that messages with role 'tool' must be a response to a preceding message with 'tool_calls'
-            model_response_with_function_call = client.chat.completions.create(
-                model="gpt-4o",
-                messages=messages,
-            )  # get a new response from the model where it can see the function response
-            print(model_response_with_function_call.choices[0].message.content)
+            #model_response_with_function_call = client.chat.completions.create(
+            #    model=GPT_MODEL,
+            #    messages=messages,
+            #)  # get a new response from the model where it can see the function response
+            #print(model_response_with_function_call.choices[0].message.content)
         else: 
             print(f"Error: function {tool_function_name} does not exist")
     else: 

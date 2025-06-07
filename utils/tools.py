@@ -1,7 +1,6 @@
 import pandas as pd
 import os
-import psycopg2
-from psycopg2.extras import RealDictCursor
+from sqlalchemy import create_engine, MetaData, Table
 from dotenv import load_dotenv
 
 
@@ -17,19 +16,10 @@ def get_faq(query):
     return df.head(5)
 
 # Utility function to retrieve POS data from PostgreSQL
-def get_pos(query):
+def get_pos(query, engine):
     """Retrieve all rows from the pos table in the retailNext database on the psqlmatchmaker server."""
-    load_dotenv()
     try:
-        conn = psycopg2.connect(
-            host="psqlmatchmaker",
-            port=os.getenv('DB_PORT', '5432'),
-            database="retailNext",
-            user=os.getenv('DB_USER'),
-            password=os.getenv('DB_PASSWORD')
-        )
-        df = pd.read_sql_query(query, conn)
-        conn.close()
+        df = pd.read_sql_query(query, engine)
         return df
     except Exception as e:
         return f"Error executing pos query: {e}"
@@ -46,23 +36,8 @@ def get_erp(product_id, store=None):
     df = pd.read_csv(path, on_bad_lines='skip')
     return df.head(5)
 
-def get_pg_schema(connection_params: dict, table_name: str) -> str:
-    conn = psycopg2.connect(**connection_params)
-    cursor = conn.cursor()
-    
-    cursor.execute(f"""
-        SELECT column_name, data_type
-        FROM information_schema.columns
-        WHERE table_name = %s
-        ORDER BY ordinal_position
-    """, (table_name,))
-    
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    
-    if not rows:
-        return f"No schema found for table '{table_name}'"
-    
-    schema_lines = [f"- {col} ({dtype})" for col, dtype in rows]
+def get_pg_schema(table_name: str, engine) -> str:
+    metadata = MetaData()
+    table = Table(table_name, metadata, autoload_with=engine)
+    schema_lines = [f"- {col.name} ({col.type})" for col in table.columns]
     return f"Table: {table_name}\nColumns:\n" + "\n".join(schema_lines)

@@ -9,3 +9,4 @@ ipykernel
 pandas
 dotenv
 psycopg2-binary
+SQLAlchemy

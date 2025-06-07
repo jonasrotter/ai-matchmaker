@@ -1,7 +1,6 @@
 import pandas as pd
 import os
-import psycopg2
-from psycopg2.extras import RealDictCursor
+from sqlalchemy import create_engine, MetaData, Table
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,43 +13,34 @@ connection_params = {
     "password": os.getenv('DB_PASSWORD')
 }
 
+# Create a SQLAlchemy engine using environment variables
+engine = create_engine(
+    f"postgresql://{connection_params['user']}:{connection_params['password']}@"
+    f"{connection_params['host']}:{connection_params['port']}/{connection_params['dbname']}"
+)
 
-def get_pg_schema(connection_params: dict, table_name: str) -> str:
-    conn = psycopg2.connect(**connection_params)
-    cursor = conn.cursor()
-    
-    cursor.execute(f"""
-        SELECT column_name, data_type
-        FROM information_schema.columns
-        WHERE table_name = %s
-        ORDER BY ordinal_position
-    """, (table_name,))
-    
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    
-    if not rows:
-        return f"No schema found for table '{table_name}'"
-    
-    schema_lines = [f"- {col} ({dtype})" for col, dtype in rows]
+
+def get_pg_schema(table_name: str) -> str:
+    metadata = MetaData()
+    table = Table(table_name, metadata, autoload_with=engine)
+    schema_lines = [f"- {col.name} ({col.type})" for col in table.columns]
     return f"Table: {table_name}\nColumns:\n" + "\n".join(schema_lines)
 
 
-def get_pos(connection_params: dict, query):
+def get_pos(query):
     """Retrieve all rows from the pos table in the retailNext database on the psqlmatchmaker server."""
     try:
-        conn = psycopg2.connect(**connection_params)
-        df = pd.read_sql_query(query, conn)
-        conn.close()
+        df = pd.read_sql_query(query, engine)
         return df
     except Exception as e:
         return f"Error executing pos query: {e}"
 
+
 def main():
-    pos_schema = get_pg_schema(connection_params, "pos")
+    print(engine)
+    pos_schema = get_pg_schema("pos")
     print(pos_schema)
-    results = get_pos(connection_params, f"""
+    results = get_pos(f"""
         SELECT *
         FROM pos
     """)

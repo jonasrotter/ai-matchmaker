@@ -18,7 +18,7 @@ client = SearchClient(AISEARCH_ENDPOINT, INDEX_NAME, AzureKeyCredential(AISEARCH
 oai = OpenAI()
 
 def get_embedding(text):
-    get_embeddings_response = oai.embeddings.create(model=EMBEDDING_MODEL, input=text, dimensions=1536)
+    get_embeddings_response = oai.embeddings.create(model=EMBEDDING_MODEL, input=text, dimensions=3072)
     return get_embeddings_response.data[0].embedding
 
 
@@ -30,7 +30,7 @@ def main():
         user_question,
         top=5, 
         vector_queries=[
-                VectorizedQuery(vector=user_question_vector, k_nearest_neighbors=3, fields="embeddings")],
+                VectorizedQuery(vector=user_question_vector, k_nearest_neighbors=3, fields="text_vector")],
     )
 
     print("Test")
