@@ -1,3 +1,6 @@
 #Ignore all files
-*.csv
 *.xlsx
+*.jpg
+
+#Ignore Environment files
+*.env

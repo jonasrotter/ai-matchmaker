@@ -5,3 +5,6 @@ numpy
 typing
 tiktoken
 concurrent
+ipykernel
+pandas
+dotenv
