@@ -8,11 +8,12 @@ from utils.tools import tools
 from dotenv import load_dotenv
 import os
 import base64
-from utils.utils import analyze_image, unique_subcategories
+from utils.utils import analyze_image
 
 
 # Load environment variables
 load_dotenv()
+unique_subcategories = pd.read_csv("data/products.csv")['subCategory'].unique()
 
 # OpenAI Client Setup
 GPT_MODEL = "gpt-4o-mini"

@@ -32,7 +32,7 @@ def analyze_image(client, image_base64, subcategories, model="gpt-4o-mini"):
                     "url": f"data:image/jpeg;base64,{image_base64}",
                 },
                 }
-            ],
+            ],  
             }
         ]
     )
@@ -41,7 +41,7 @@ def analyze_image(client, image_base64, subcategories, model="gpt-4o-mini"):
     return features
 
 # Simple function to take in a list of text objects and return them as a list of embeddings
-def get_embeddings(client, input: List, model="text-embedding-3-large"):
+def get_embeddings(client, input: list, model="text-embedding-3-large"):
     response = client.embeddings.create(
         input=input,
         model=model
