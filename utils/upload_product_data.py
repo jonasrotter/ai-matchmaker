@@ -20,7 +20,7 @@ index_name = "products-index"
 
 def upload_data():
     # Convert the 'id' and 'vector_id' columns to string so one of them can serve as our key field
-    df = pd.read_csv("../../data/sample_styles_with_embeddedings.csv")
+    df = pd.read_csv("data/sample_styles_with_embeddings.csv")
     df["id"] = df["id"].astype(str)
 
     # Convert the DataFrame to a list of dictionaries
@@ -47,3 +47,4 @@ def upload_data():
 
 if __name__ == '__main__':
     upload_data()
+    print("Success!")

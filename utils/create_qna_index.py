@@ -32,11 +32,9 @@ from openai import OpenAI
 load_dotenv()
 client = OpenAI()
 
-GPT_MODEL = "gpt-4o-mini"
-EMBEDDING_MODEL = "text-embedding-3-large"
 AISEARCH_ENDPOINT = os.getenv('AZURE_AISEARCH_ENDPOINT')
 AISEARCH_KEY = os.getenv('AZURE_AISEARCH_ADMIN_KEY')
-index_name = "products-index"
+index_name = "qna-index"
 
 
 def create_index():
@@ -48,15 +46,9 @@ def create_index():
     # Define the fields for the index
     fields = [
         SimpleField(name="id", type=SearchFieldDataType.String, key=True),
-        SimpleField(name="gender", type=SearchFieldDataType.String),
-        SimpleField(name="masterCategory", type=SearchFieldDataType.String),
-        SimpleField(name="subCategory", type=SearchFieldDataType.String),
-        SimpleField(name="articleType", type=SearchFieldDataType.String),
-        SimpleField(name="baseColour", type=SearchFieldDataType.String),
-        SimpleField(name="season", type=SearchFieldDataType.String),
-        SimpleField(name="year", type=SearchFieldDataType.Int32),
-        SimpleField(name="usage", type=SearchFieldDataType.String),
-        SearchableField(name="productDisplayName", type=SearchFieldDataType.String),
+        SimpleField(name="category", type=SearchFieldDataType.String),
+        SearchableField(name="question", type=SearchFieldDataType.String),
+        SearchableField(name="answer", type=SearchFieldDataType.String),
         SearchField(
             name="embeddings",
             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
@@ -93,8 +85,8 @@ def create_index():
             SemanticConfiguration(
                 name="my-semantic-config",
                 prioritized_fields=SemanticPrioritizedFields(
-                    keywords_fields=[SemanticField(field_name="gender"), SemanticField(field_name="masterCategory"), SemanticField(field_name="baseColour")],
-                    content_fields=[SemanticField(field_name="productDisplayName")],
+                    keywords_fields=[SemanticField(field_name="category")],
+                    content_fields=[SemanticField(field_name="question")],
                 ),
             )
         ]
