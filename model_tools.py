@@ -1,4 +1,4 @@
-from utils.functions import get_crm, get_erp, get_pos, get_products, get_qna
+from utils.functions import get_crm, get_erp, get_pos, get_products, get_faq
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.models import (

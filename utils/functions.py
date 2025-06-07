@@ -1,12 +1,12 @@
 import pandas as pd
 #Utility function to retrieve product data from AI Search
-def get_products():
+def get_products(keyword):
     path = "data/sample_styles_with_embeddings.csv"
     df = pd.read_csv(path, on_bad_lines='skip')
     return df.head(5)
 
 # Utility function to retrieve qna data from AI Search
-def get_qna():
+def get_faq(query):
     path = "data/qna.csv"
     df = pd.read_csv(path, on_bad_lines='skip')
     return df.head(5)
@@ -18,13 +18,13 @@ def get_pos():
     return df.head(5)
 
 # Utility function to retrieve CRM context data from PostgreSQL
-def get_crm():
+def get_crm(customer_name):
     path = "data/crm.csv"
     df = pd.read_csv(path, on_bad_lines='skip')
     return df.head(5)
 
 # Utility function to retrieve ERP data from PostgreSQL
-def get_erp():
+def get_erp(product_id, store=None):
     path = "data/erp.csv"
     df = pd.read_csv(path, on_bad_lines='skip')
     return df.head(5)
