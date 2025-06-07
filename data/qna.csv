@@ -1,22 +1,22 @@
 ID,Category,Question,Answer
 1,Pricing,Is this item on sale?,Let me scan it to check. Some promotions aren’t labeled but are applied at checkout.
-2,Pricing,Do you offer student/senior/military discounts?,"Yes, we offer a [10%] discount with valid ID. Just show it at checkout."
-3,Pricing,Can you apply an online promo code in-store?,"Some online promotions are exclusive, but let me check — we may have a similar in-store offer."
+2,Pricing,"Do you offer student/senior/military discounts?,""Yes"," we offer a [10%] discount with valid ID. Just show it at checkout."""
+3,Pricing,"Can you apply an online promo code in-store?,""Some online promotions are exclusive"," but let me check — we may have a similar in-store offer."""
 4,Returns,What’s your return policy?,Items can be returned within 30 days with the receipt. They must be unworn and have tags attached.
-5,Returns,Can I return something I bought online here?,"Yes, online orders can be returned or exchanged in-store with the confirmation email or order number."
-6,Returns, Exchanges, and Payments",Do you offer contactless payment?,"Yes, we accept Apple Pay, Google Pay, and tap-to-pay cards."
-7,Loyalty, Orders, and Gift Cards",How can I check my loyalty points?,I can look it up with your phone number or email. You can also check in the app or online.
-8,Loyalty, Orders, and Gift Cards",Can I use a gift card here?,"Yes, both physical and e-gift cards are accepted at checkout."
-9,Loyalty, Orders, and Gift Cards",How long does it take for an order to arrive if shipped to home?,Standard delivery usually takes 3–5 business days. Express options are also available.
+5,Returns,"Can I return something I bought online here?,""Yes"," online orders can be returned or exchanged in-store with the confirmation email or order number."""
+6,Returns," Exchanges, and Payments"",Do you offer contactless payment?,""Yes, we accept Apple Pay, Google Pay"," and tap-to-pay cards."""
+7,Loyalty," Orders, and Gift Cards"",How can I check my loyalty points?",I can look it up with your phone number or email. You can also check in the app or online.
+8,Loyalty," Orders, and Gift Cards"",Can I use a gift card here?,""Yes"," both physical and e-gift cards are accepted at checkout."""
+9,Loyalty," Orders, and Gift Cards"",How long does it take for an order to arrive if shipped to home?",Standard delivery usually takes 3–5 business days. Express options are also available.
 10,General,What time do you close?,We’re open until [9 PM] today.
-11,General,Do you offer gift wrapping?,"Yes, we offer complimentary gift wrapping at the checkout counter."
+11,General,"Do you offer gift wrapping?,""Yes"," we offer complimentary gift wrapping at the checkout counter."""
 12,General,Is there someone who can help me with a personal shopping session?,Absolutely — I can assist you now or schedule a styling appointment with one of our team members.
 13,General,Can I speak with a manager?,Of course. Let me page the manager on duty for you.
-14,General,Can I combine multiple discounts?,"Generally, only one discount or promo code can be used per purchase. Let me double-check for any exceptions."
-15,General,Do sale items qualify for additional discounts?,"Most sale items are already discounted and may not qualify for further reductions, but I can confirm the policy for you."
-16,General,Can I exchange an item instead of returning it?,"Yes, as long as the item is eligible under our return policy, you can exchange it for a different size, color, or style."
-17,General,Can I get a refund to my original payment method?,"Yes, refunds are issued to the original form of payment. Gift returns can be refunded to a store credit."
-18,General,Can I earn points on sale items?,"Yes, loyalty points are awarded based on your total purchase, including most sale items."
-19,General,Can I reload a gift card?,"Currently, our gift cards are not reloadable, but you can always purchase a new one."
-20,General,Do you have public restrooms?,"Yes, restrooms are available at the back of the store near the fitting rooms."
-21,General,Is there Wi-Fi available in the store?,"Yes, we offer free guest Wi-Fi. Ask any associate for the login details."
+14,General,"Can I combine multiple discounts?,""Generally"," only one discount or promo code can be used per purchase. Let me double-check for any exceptions."""
+15,General,"Do sale items qualify for additional discounts?,""Most sale items are already discounted and may not qualify for further reductions"," but I can confirm the policy for you."""
+16,General,"Can I exchange an item instead of returning it?,""Yes, as long as the item is eligible under our return policy, you can exchange it for a different size, color"," or style."""
+17,General,"Can I get a refund to my original payment method?,""Yes"," refunds are issued to the original form of payment. Gift returns can be refunded to a store credit."""
+18,General,"Can I earn points on sale items?,""Yes, loyalty points are awarded based on your total purchase"," including most sale items."""
+19,General,"Can I reload a gift card?,""Currently, our gift cards are not reloadable"," but you can always purchase a new one."""
+20,General,"Do you have public restrooms?,""Yes"," restrooms are available at the back of the store near the fitting rooms."""
+21,General,"Is there Wi-Fi available in the store?,""Yes"," we offer free guest Wi-Fi. Ask any associate for the login details."""

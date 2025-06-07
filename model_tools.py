@@ -1,4 +1,5 @@
-from utils.functions import get_crm, get_erp, get_pos, get_products, get_faq
+from utils.tools import get_crm, get_erp, get_pos, get_products, get_faq
+from utils.utils import 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.models import (
@@ -103,7 +104,7 @@ tools = [{
         }
     }
 },
-  {
+{
     "type": "function",
     "function": {
         "name": "get_faq",
@@ -121,6 +122,35 @@ tools = [{
     }
 }
 ]
+
+def model_tools(user_prompt: str):
+    # "Is there Wifi in the store?"
+    messages = []
+    messages.append({"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."})
+    messages.append({"role": "user", "content": user_prompt})
+
+    response = client.chat.completions.create(
+        model=GPT_MODEL,
+        messages=messages,
+        tools=tools,
+        tool_choice="auto",
+    )
+
+    assistant_message = response.choices[0].message
+    messages.append(assistant_message)
+
+        # Handle function call (if any)
+    if assistant_message.tool_calls:
+        for tool_call in assistant_message.tool_calls:
+            func_name = tool_call.function.name
+            arguments = eval(tool_call.function.arguments)
+
+            # Dynamically import function from utils.tools
+            from utils import tools
+            func = getattr(tools, func_name)
+
+            result = func(**arguments)
+
 
 def main ():
     messages = []

@@ -4,11 +4,12 @@ from openai import OpenAI
 from dotenv import load_dotenv 
 from PIL import Image
 import json
-from model_tools import tools
+from utils.tools import tools
 from dotenv import load_dotenv
 import os
 import base64
-from model import analyze_image, unique_subcategories
+from utils.utils import analyze_image, unique_subcategories
+
 
 # Load environment variables
 load_dotenv()
@@ -47,10 +48,6 @@ if user_input:
         analysis = analyze_image(encoded, unique_subcategories)
         # Show analysis results
         st.subheader("Image Analysis")
-        try:
-            st.json(json.loads(analysis))
-        except Exception:
-            st.write(analysis)
 
     # Send to OpenAI with tool calling
     response = client.chat.completions.create(
@@ -74,8 +71,8 @@ if user_input:
             arguments = eval(tool_call.function.arguments)
 
             # Dynamically import function from utils.functions
-            from utils import functions
-            func = getattr(functions, func_name)
+            from utils import tools
+            func = getattr(tools, func_name)
 
             result = func(**arguments)
 
