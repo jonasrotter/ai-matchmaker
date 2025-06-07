@@ -1,4 +1,4 @@
-# ai-matchmaker
+# AI Matchmaker
 
 ## Overview
 This project is an AI-powered outfit recommendation assistant that combines GPT-4o with Retrieval-Augmented Generation (RAG). It uses a dataset of clothing styles, precomputed embeddings, and sample images to generate personalized outfit suggestions based on natural language queries.
