@@ -224,16 +224,16 @@ def main ():
                 "role":"tool", 
                 "tool_call_id":tool_call_id, 
                 "name": tool_function_name, 
-                "content":results
+                "content": results.to_json(orient='records', lines=True)
             })
             
             # Step 4: Invoke the chat completions API with the function response appended to the messages list
             # Note that messages with role 'tool' must be a response to a preceding message with 'tool_calls'
-            #model_response_with_function_call = client.chat.completions.create(
-            #    model=GPT_MODEL,
-            #    messages=messages,
-            #)  # get a new response from the model where it can see the function response
-            #print(model_response_with_function_call.choices[0].message.content)
+            model_response_with_function_call = client.chat.completions.create(
+                model=GPT_MODEL,
+                messages=messages,
+            )  # get a new response from the model where it can see the function response
+            print(f"Model Response: {model_response_with_function_call.choices[0].message.content}")
         else: 
             print(f"Error: function {tool_function_name} does not exist")
     else: 
