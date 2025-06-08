@@ -50,6 +50,7 @@ crm_schema = get_pg_schema("crm", engine=engine)
 GPT_MODEL = "gpt-4o-mini"
 EMBEDDING_MODEL = "text-embedding-3-large"
 EMBEDDING_COST_PER_1K_TOKENS = 0.00013
+SYSTEM_PROMPT="Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."
 client = OpenAI()
 
 
@@ -169,48 +170,14 @@ tools = [{
 }
 ]
 
-def model_tools(user_prompt: str):
-    # "Is there Wifi in the store?"
+
+
+def store_assistant_agent(user_query: str):
     messages = []
-    messages.append({"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."})
-    messages.append({"role": "user", "content": user_prompt})
-
-    response = client.chat.completions.create(
-        model=GPT_MODEL,
-        messages=messages,
-        tools=tools,
-        tool_choice="auto",
-    )
-
-    assistant_message = response.choices[0].message
-    messages.append(assistant_message)
-
-        # Handle function call (if any)
-    if assistant_message.tool_calls:
-        for tool_call in assistant_message.tool_calls:
-            func_name = tool_call.function.name
-            arguments = eval(tool_call.function.arguments)
-
-            # Dynamically import function from utils.tools
-            from utils import tools
-            func = getattr(tools, func_name)
-
-            result = func(**arguments)
-
-
-def main ():
-    print(engine)
-    messages = []
-    messages.append({"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."})
-    a="Is there Wifi in the store?" #QNA-Index
-    b= "What is the stock for product 27152?" #ERP
-    b1= "In which stores is product 27152 available?" #ERP
-    c= "What is the sales summary for product 34586?" #POS
-    d= "What are the customer preferences for Alice Smith?" #CRM
-    e="Do you have blue pants for men?" #Prod-Index
+    messages.append({"role": "system", "content": SYSTEM_PROMPT})
 
     # Step #1: Prompt with content that may result in function call. In this case the model can identify the information requested by the user is potentially available in the database schema passed to the model in Tools description. 
-    messages.append({"role": "user", "content": d})
+    messages.append({"role": "user", "content": user_query})
 
     response = client.chat.completions.create(
         model=GPT_MODEL,
@@ -276,4 +243,10 @@ def main ():
         print(assistant_message.content) 
 
 if __name__ == "__main__":
-    main()
+    a="Is there Wifi in the store?" #QNA-Index
+    b= "What is the stock for product 27152?" #ERP
+    b1= "In which stores is product 27152 available?" #ERP
+    c= "What is the sales summary for product 34586?" #POS
+    d= "What are the customer preferences for Alice Smith?" #CRM
+    e="Do you have blue pants for men?" #Prod-Index
+    store_assistant_agent(a)

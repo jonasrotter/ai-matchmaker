@@ -4,7 +4,7 @@ from openai import OpenAI
 from dotenv import load_dotenv 
 from PIL import Image
 import json
-from utils.tools import tools
+from utils.tools import get_products
 from dotenv import load_dotenv
 import os
 import base64
