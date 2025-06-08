@@ -42,8 +42,8 @@ engine = create_engine(
 
 # Get the schema for the pos table
 pos_schema = get_pg_schema("pos", engine=engine)
-#erp_schema = get_pg_schema("erp")
-#crm_schema = get_pg_schema("crm")
+erp_schema = get_pg_schema("erp", engine=engine)
+crm_schema = get_pg_schema("crm", engine=engine)
 #products_schema = get_pg_schema("products", engine)
 
 # OpenAI Client Setup
@@ -63,13 +63,17 @@ tools = [{
         "parameters": {
             "type": "object",
             "properties": {
-                "customer_name": {
-                    "type": "string",
-                    "description": "Name of the customer to retrieve information for."
-                    }
-                },
-                "required": ["customer_name"],
-                "additionalProperties": False
+            "query": {
+                "type": "string",
+                "description": f"""
+                                SQL query extracting info to answer the user's question.
+                                SQL should be written using this database schema:
+                                {crm_schema}
+                                The query should be returned in plain text, not in JSON.
+                                """, 
+            }
+            },
+            "required": ["query"]
         }
     }
 },
@@ -81,16 +85,17 @@ tools = [{
         "parameters": {
             "type": "object",
             "properties": {
-            "product_id": {
-                "type": "integer",
-                "description": "The ID of the product to check"
-            },
-            "store": {
+            "query": {
                 "type": "string",
-                "description": "The store location name"
+                "description": f"""
+                                SQL query extracting info to answer the user's question.
+                                SQL should be written using this database schema:
+                                {erp_schema}
+                                The query should be returned in plain text, not in JSON.
+                                """, 
             }
             },
-            "required": ["product_id"]
+            "required": ["query"]
         }
     }
 },
@@ -217,25 +222,53 @@ def main ():
         print(f"Tool query string: {tool_query_string}")
 
         # Step 3: Call the function and retrieve results. Append the results to the messages list.      
+        # Retrieve information from POS
         if tool_function_name == 'get_pos':
             results = get_pos(tool_query_string, engine)
-            print(f"Results: {results.head()}")
             messages.append({
                 "role":"tool", 
                 "tool_call_id":tool_call_id, 
                 "name": tool_function_name, 
                 "content": results.to_json(orient='records', lines=True)
             })
-            
-            # Step 4: Invoke the chat completions API with the function response appended to the messages list
-            # Note that messages with role 'tool' must be a response to a preceding message with 'tool_calls'
             model_response_with_function_call = client.chat.completions.create(
                 model=GPT_MODEL,
                 messages=messages,
-            )  # get a new response from the model where it can see the function response
+            ) 
+            print(f"Model Response: {model_response_with_function_call.choices[0].message.content}")
+        
+        # Retrieve information from ERP
+        elif tool_function_name == 'get_erp':
+            results = get_pos(tool_query_string, engine)
+            messages.append({
+                "role":"tool", 
+                "tool_call_id":tool_call_id, 
+                "name": tool_function_name, 
+                "content": results.to_json(orient='records', lines=True)
+            })
+            model_response_with_function_call = client.chat.completions.create(
+                model=GPT_MODEL,
+                messages=messages,
+            ) 
+            print(f"Model Response: {model_response_with_function_call.choices[0].message.content}")
+        
+        # Retrieve information from CRM
+        elif tool_function_name == 'get_crm':
+            results = get_crm(tool_query_string, engine)
+            messages.append({
+                "role":"tool", 
+                "tool_call_id":tool_call_id, 
+                "name": tool_function_name, 
+                "content": results.to_json(orient='records', lines=True)
+            })
+            model_response_with_function_call = client.chat.completions.create(
+                model=GPT_MODEL,
+                messages=messages,
+            ) 
             print(f"Model Response: {model_response_with_function_call.choices[0].message.content}")
         else: 
             print(f"Error: function {tool_function_name} does not exist")
+
     else: 
         # Model did not identify a function to call, result can be returned to the user 
         print(assistant_message.content) 
