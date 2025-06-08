@@ -33,7 +33,7 @@ client = OpenAI()
 # Azure AI Search Client Setup
 AISEARCH_ENDPOINT = os.getenv('AZURE_AISEARCH_ENDPOINT')
 AISEARCH_KEY = os.getenv('AZURE_AISEARCH_ADMIN_KEY')
-index_name = "product-index"
+index_name = "prod-index"
 search_client = SearchClient(AISEARCH_ENDPOINT, index_name, AzureKeyCredential(AISEARCH_KEY))  
 
 

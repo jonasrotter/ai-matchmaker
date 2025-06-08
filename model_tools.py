@@ -173,6 +173,8 @@ tools = [{
 
 
 def store_assistant_agent(user_query: str):
+    print("Starting store assistant agent...")
+    print(f"User query: {user_query}")
     messages = []
     messages.append({"role": "system", "content": SYSTEM_PROMPT})
 
@@ -241,6 +243,8 @@ def store_assistant_agent(user_query: str):
     else: 
         # Model did not identify a function to call, result can be returned to the user 
         print(assistant_message.content) 
+
+    print("Store assistant agent completed.")
 
 if __name__ == "__main__":
     a="Is there Wifi in the store?" #QNA-Index

@@ -19,7 +19,6 @@ dotenv.load_dotenv()
 
 AISEARCH_ENDPOINT = os.getenv('AZURE_AISEARCH_ENDPOINT')
 AISEARCH_KEY = os.getenv('AZURE_AISEARCH_ADMIN_KEY')
-INDEX_NAME = "prod-index"
 GPT_MODEL = "gpt-4o-mini"
 EMBEDDING_MODEL = "text-embedding-3-large"
 
@@ -89,7 +88,7 @@ def get_pg_schema(table_name: str, engine) -> str:
     schema_lines = [f"- {col.name} ({col.type})" for col in table.columns]
     return f"Table: {table_name}\nColumns:\n" + "\n".join(schema_lines)
 
-def get_embedding(text, client=OpenAI):
+def get_embedding(text, client=OpenAI()):
     get_embeddings_response = client.embeddings.create(model=EMBEDDING_MODEL, input=text, dimensions=3072)
     return get_embeddings_response.data[0].embedding
 
