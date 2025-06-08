@@ -52,6 +52,7 @@ def main():
     )
 
     semantic_answers = results.get_answers()
+    print(semantic_answers[0].text)
     for answer in semantic_answers:
         if answer.highlights:
             print(f"Semantic Answer: {answer.highlights}")

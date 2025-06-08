@@ -54,12 +54,12 @@ client = OpenAI()
 
 
 
-#Utility function to retrieve product data from AI Search
+#Utility function to retrieve data with functions from PostgreSQL database or AI Search
 tools = [{
     "type": "function",
     "function": {
         "name": "get_crm",
-        "description": "Get information about the customer like preferenced email, loyalty_status, preferred_colors, preferred_sizes",
+        "description": "Get information about the customer like loyalty_status, preferred_colors, preferred_sizes",
         "parameters": {
             "type": "object",
             "properties": {
@@ -125,16 +125,22 @@ tools = [{
     "type": "function",
     "function": {
         "name": "get_products",
-        "description": "Search for product names in the product database",
+        "description": "Search for relevant products based on the questions asked by the user that is stored within the vector database using a semantic query.",
         "parameters": {
             "type": "object",
             "properties": {
-            "keyword": {
-                "type": "string",
-                "description": "Keyword to search for in product names"
-            }
+                "query": {
+                    "type": "string",
+                    "description": "The natural language query to search the vector database."
+                },
+                "top_k": {
+                    "type": "integer",
+                    "description": "Number of top results to return.",
+                    "default": 3
+                }
             },
-            "required": ["keyword"]
+            "required": ["query"],
+            "additionalProperties": False
         }
     }
 },
@@ -142,16 +148,22 @@ tools = [{
     "type": "function",
     "function": {
         "name": "get_faq",
-        "description": "Retrieve an answer from the employee Q&A database",
+        "description": "Search for relevant FAQs about Discounts, Return Policy, Loyalty Programs and General Questions about the Store, based on the questions asked by the user that is stored within the vector database using a semantic query",
         "parameters": {
             "type": "object",
             "properties": {
-            "query": {
-                "type": "string",
-                "description": "The question or phrase to search the Q&A for"
-            }
+                "query": {
+                    "type": "string",
+                    "description": "The natural language query to search the vector database."
+                },
+                "top_k": {
+                    "type": "integer",
+                    "description": "Number of top results to return.",
+                    "default": 3
+                }
             },
-            "required": ["query"]
+            "required": ["query"],
+            "additionalProperties": False
         }
     }
 }
@@ -190,11 +202,12 @@ def main ():
     print(engine)
     messages = []
     messages.append({"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."})
-    a="Is there Wifi in the store?" #QNA
+    a="Is there Wifi in the store?" #QNA-Index
     b= "What is the stock for product 27152?" #ERP
     b1= "In which stores is product 27152 available?" #ERP
     c= "What is the sales summary for product 34586?" #POS
     d= "What are the customer preferences for Alice Smith?" #CRM
+    e="Do you have blue pants for men?" #Prod-Index
 
     # Step #1: Prompt with content that may result in function call. In this case the model can identify the information requested by the user is potentially available in the database schema passed to the model in Tools description. 
     messages.append({"role": "user", "content": d})
@@ -218,57 +231,45 @@ def main ():
         tool_call_id = tool_calls[0].id
         tool_function_name = tool_calls[0].function.name
         tool_query_string = json.loads(tool_calls[0].function.arguments)['query']
-        print(f"Tool call ID: {tool_call_id}")
+        
         print(f"Tool function name: {tool_function_name}")
         print(f"Tool query string: {tool_query_string}")
 
         # Step 3: Call the function and retrieve results. Append the results to the messages list.      
+        # Retrieve information from Products Database
+        if tool_function_name == 'get_products':
+            results = get_products(tool_query_string)
+        
+        # Retrieve information from FAQ
+        elif tool_function_name == 'get_faq':
+            results = get_faq(tool_query_string)
+        
         # Retrieve information from POS
-        if tool_function_name == 'get_pos':
+        elif tool_function_name == 'get_pos':
             results = get_pos(tool_query_string, engine)
-            messages.append({
-                "role":"tool", 
-                "tool_call_id":tool_call_id, 
-                "name": tool_function_name, 
-                "content": results.to_json(orient='records', lines=True)
-            })
-            model_response_with_function_call = client.chat.completions.create(
-                model=GPT_MODEL,
-                messages=messages,
-            ) 
-            print(f"Model Response: {model_response_with_function_call.choices[0].message.content}")
         
         # Retrieve information from ERP
         elif tool_function_name == 'get_erp':
             results = get_erp(tool_query_string, engine)
-            messages.append({
-                "role":"tool", 
-                "tool_call_id":tool_call_id, 
-                "name": tool_function_name, 
-                "content": results.to_json(orient='records', lines=True)
-            })
-            model_response_with_function_call = client.chat.completions.create(
-                model=GPT_MODEL,
-                messages=messages,
-            ) 
-            print(f"Model Response: {model_response_with_function_call.choices[0].message.content}")
-        
+ 
         # Retrieve information from CRM
         elif tool_function_name == 'get_crm':
             results = get_crm(tool_query_string, engine)
-            messages.append({
-                "role":"tool", 
-                "tool_call_id":tool_call_id, 
-                "name": tool_function_name, 
-                "content": results.to_json(orient='records', lines=True)
-            })
-            model_response_with_function_call = client.chat.completions.create(
-                model=GPT_MODEL,
-                messages=messages,
-            ) 
-            print(f"Model Response: {model_response_with_function_call.choices[0].message.content}")
+            
         else: 
             print(f"Error: function {tool_function_name} does not exist")
+        
+        messages.append({
+            "role":"tool", 
+            "tool_call_id":tool_call_id, 
+            "name": tool_function_name, 
+            "content": results
+        })
+        model_response_with_function_call = client.chat.completions.create(
+            model=GPT_MODEL,
+            messages=messages,
+        ) 
+        print(f"Model Response: {model_response_with_function_call.choices[0].message.content}")
 
     else: 
         # Model did not identify a function to call, result can be returned to the user 
