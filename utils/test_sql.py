@@ -37,7 +37,6 @@ def get_pos(query):
 
 
 def main():
-    print(engine)
     pos_schema = get_pg_schema("pos")
     print(pos_schema)
     results = get_pos(f"""

@@ -190,13 +190,14 @@ def main ():
     print(engine)
     messages = []
     messages.append({"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."})
-    a="Is there Wifi in the store?"
-    b= "What is the stock for product 123 in store A?"
-    c= "What is the sales summary for product 34586?"
-    d= "What are the customer preferences for John Doe?"
+    a="Is there Wifi in the store?" #QNA
+    b= "What is the stock for product 27152?" #ERP
+    b1= "In which stores is product 27152 available?" #ERP
+    c= "What is the sales summary for product 34586?" #POS
+    d= "What are the customer preferences for Alice Smith?" #CRM
 
     # Step #1: Prompt with content that may result in function call. In this case the model can identify the information requested by the user is potentially available in the database schema passed to the model in Tools description. 
-    messages.append({"role": "user", "content": c})
+    messages.append({"role": "user", "content": d})
 
     response = client.chat.completions.create(
         model=GPT_MODEL,
@@ -239,7 +240,7 @@ def main ():
         
         # Retrieve information from ERP
         elif tool_function_name == 'get_erp':
-            results = get_pos(tool_query_string, engine)
+            results = get_erp(tool_query_string, engine)
             messages.append({
                 "role":"tool", 
                 "tool_call_id":tool_call_id, 

@@ -17,7 +17,6 @@ def get_faq(query):
 
 # Utility function to retrieve POS data from PostgreSQL
 def get_pos(query, engine):
-    """Retrieve all rows from the pos table in the retailNext database on the psqlmatchmaker server."""
     try:
         df = pd.read_sql_query(query, engine)
         return df
@@ -25,16 +24,20 @@ def get_pos(query, engine):
         return f"Error executing pos query: {e}"
 
 # Utility function to retrieve CRM context data from PostgreSQL
-def get_crm(customer_name):
-    path = "data/crm.csv"
-    df = pd.read_csv(path, on_bad_lines='skip')
-    return df.head(5)
+def get_crm(query, engine):
+    try:
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        return f"Error executing pos query: {e}"
 
 # Utility function to retrieve ERP data from PostgreSQL
-def get_erp(product_id, store=None):
-    path = "data/erp.csv"
-    df = pd.read_csv(path, on_bad_lines='skip')
-    return df.head(5)
+def get_erp(query, engine):
+    try:
+        df = pd.read_sql_query(query, engine)
+        return df
+    except Exception as e:
+        return f"Error executing pos query: {e}"
 
 def get_pg_schema(table_name: str, engine) -> str:
     metadata = MetaData()
