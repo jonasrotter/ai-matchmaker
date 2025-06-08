@@ -1,4 +1,5 @@
-from utils.tools import get_crm, get_erp, get_pos, get_products, get_faq, get_pg_schema 
+from utils.tools import get_crm, get_erp, get_pos, get_products, get_faq, get_pg_schema
+from utils.tools import call_function 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.models import (
@@ -204,30 +205,7 @@ def store_assistant_agent(user_query: str):
         
         print(f"Tool function name: {tool_function_name}")
         print(f"Tool query string: {tool_query_string}")
-
-        # Step 3: Call the function and retrieve results. Append the results to the messages list.      
-        # Retrieve information from Products Database
-        if tool_function_name == 'get_products':
-            results = get_products(tool_query_string)
-        
-        # Retrieve information from FAQ
-        elif tool_function_name == 'get_faq':
-            results = get_faq(tool_query_string)
-        
-        # Retrieve information from POS
-        elif tool_function_name == 'get_pos':
-            results = get_pos(tool_query_string, engine)
-        
-        # Retrieve information from ERP
-        elif tool_function_name == 'get_erp':
-            results = get_erp(tool_query_string, engine)
- 
-        # Retrieve information from CRM
-        elif tool_function_name == 'get_crm':
-            results = get_crm(tool_query_string, engine)
-            
-        else: 
-            print(f"Error: function {tool_function_name} does not exist")
+        results = call_function(tool_function_name, tool_query_string, engine)
         
         messages.append({
             "role":"tool", 

@@ -82,6 +82,20 @@ def get_erp(query, engine):
     except Exception as e:
         return f"Error executing pos query: {e}"
 
+def call_function(function_name, query, engine):
+    if function_name == 'get_products':
+        return get_products(query)
+    elif function_name == 'get_faq':
+        return get_faq(query)
+    elif function_name == 'get_pos':
+        return get_pos(query, engine)
+    elif function_name == 'get_erp':
+        return get_erp(query, engine)
+    elif function_name == 'get_crm':
+        return get_crm(query, engine)
+    else:
+        return f"Error: function {function_name} does not exist"
+
 def get_pg_schema(table_name: str, engine) -> str:
     metadata = MetaData()
     table = Table(table_name, metadata, autoload_with=engine)
