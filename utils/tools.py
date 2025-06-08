@@ -23,7 +23,6 @@ INDEX_NAME = "prod-index"
 GPT_MODEL = "gpt-4o-mini"
 EMBEDDING_MODEL = "text-embedding-3-large"
 
-oai = OpenAI()
 
 # Retrieve Product data from AI Search
 def get_products(query):
@@ -90,8 +89,8 @@ def get_pg_schema(table_name: str, engine) -> str:
     schema_lines = [f"- {col.name} ({col.type})" for col in table.columns]
     return f"Table: {table_name}\nColumns:\n" + "\n".join(schema_lines)
 
-def get_embedding(text):
-    get_embeddings_response = oai.embeddings.create(model=EMBEDDING_MODEL, input=text, dimensions=3072)
+def get_embedding(text, client=OpenAI):
+    get_embeddings_response = client.embeddings.create(model=EMBEDDING_MODEL, input=text, dimensions=3072)
     return get_embeddings_response.data[0].embedding
 
 def encode_image_to_base64(image_path):
@@ -99,10 +98,10 @@ def encode_image_to_base64(image_path):
         encoded_image = base64.b64encode(image_file.read())
         return encoded_image.decode('utf-8')
     
-def analyze_image(image_base64):
+def analyze_image(image_base64, client=OpenAI()):
     # Product subcateorie
     subcategories = pd.read_csv("data/products.csv")['articleType'].unique()
-    response = oai.chat.completions.create(
+    response = client.chat.completions.create(
         model=GPT_MODEL,
         messages=[
             {
