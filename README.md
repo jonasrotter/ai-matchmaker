@@ -34,7 +34,28 @@ OPENAI_API_KEY=your_api_key_here
 ```
 
 ## Usage
-- Launch the Jupyter notebook to run the outfit assistant demo:
-  ```powershell
-  jupyter notebook How_to_combine_GPT4o_with_RAG_Outfit_Assistant.ipynb
-  ```
+You can explore and run this project in three ways:
+
+1. Foundations Notebook
+   - File: `How_to_combine_GPT4o_with_RAG_Outfit_Assistant.ipynb`
+   - Launch with:
+     ```powershell
+     jupyter notebook How_to_combine_GPT4o_with_RAG_Outfit_Assistant.ipynb
+     ```
+   - Use this notebook to understand the underlying GPT-4o + RAG integration.
+
+2. Core Functionality Notebook
+   - File: `StoreAssistant_RetailNext.ipynb`
+   - Launch with:
+     ```powershell
+     jupyter notebook StoreAssistant_RetailNext.ipynb
+     ```
+   - Use this notebook to explore the agent architecture and utility tools for Product, POS, ERP, CRM, and FAQ queries.
+
+3. User-Friendly UI
+   - Script: `app.py`
+   - Run with Streamlit:
+     ```powershell
+     streamlit run app.py
+     ```
+   - Launches an interactive chat interface where you can ask about store data, upload images, and receive AI-powered responses.

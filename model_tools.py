@@ -238,6 +238,7 @@ def store_assistant_agent(user_query: str):
             messages=messages,
         ) 
         print(f"Model Response: {model_response_with_function_call.choices[0].message.content}")
+        return model_response_with_function_call.choices[0].message.content
 
     else: 
         # Model did not identify a function to call, result can be returned to the user 

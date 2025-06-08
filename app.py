@@ -36,9 +36,8 @@ uploaded_file = st.file_uploader("Upload an item image", type=["jpg", "jpeg", "p
 
 if user_input:
     # Display user message
-    st.chat_message("user").markdown(user_input)
     st.session_state.messages.append({"role": "user", "content": user_input})
-
+    item_descs = ""
     if uploaded_file:
         # Display the uploaded image
         st.image(uploaded_file, caption="Uploaded image", use_column_width=True)
@@ -46,45 +45,20 @@ if user_input:
         img_bytes = uploaded_file.read()
         encoded = base64.b64encode(img_bytes).decode("utf-8")
         # Analyze via model
-        analysis = analyze_image(encoded, unique_subcategories)
+        analysis = analyze_image(encoded)
+        image_analysis = json.loads(analysis)
+        
+        # Extract the relevant features from the analysis
+        item_descs = image_analysis['items'][0]
         # Show analysis results
         st.subheader("Image Analysis")
 
     # Send to OpenAI with tool calling
-    response = client.chat.completions.create(
-        model=GPT_MODEL,
-        messages=st.session_state.messages,
-        tools=tools,
-        tool_choice="auto",
-    )
+    response = store_assistant_agent(user_input+item_descs)
 
     # Handle response
-    assistant_msg = response.choices[0].message
-    st.session_state.messages.append(assistant_msg)
+    st.session_state.messages.append({"role": "assistant", "content": response})
 
-    # Show assistant reply
-    st.chat_message("assistant").markdown(assistant_msg.content or "🔧 (Tool call in progress...)")
-
-    # Handle function call (if any)
-    if assistant_msg.tool_calls:
-        for tool_call in assistant_msg.tool_calls:
-            func_name = tool_call.function.name
-            arguments = eval(tool_call.function.arguments)
-
-            # Dynamically import function from utils.functions
-            from utils import tools
-            func = getattr(tools, func_name)
-
-            result = func(**arguments)
-
-            # Show result in chat
-            st.chat_message("function").markdown(f"**Function `{func_name}` returned:**\n\n{result}")
-
-            # Add function result as assistant message
-            st.session_state.messages.append({
-                "role": "function",
-                "name": func_name,
-                "content": result
-            })
-
-
+# After processing input, render the full chat history
+for msg in st.session_state.messages:
+    st.chat_message(msg["role"]).markdown(msg["content"])
