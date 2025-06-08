@@ -8,8 +8,8 @@ from utils.tools import get_products
 from dotenv import load_dotenv
 import os
 import base64
-from utils.utils import analyze_image
-
+from utils.tools import analyze_image
+from model_tools import store_assistant_agent
 
 # Load environment variables
 load_dotenv()
