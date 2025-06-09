@@ -5,9 +5,12 @@ This project is an AI-powered outfit recommendation assistant that combines GPT-
 
 ## File Structure
 - `data/`
-  - `sample_styles.csv`            : Raw style data (labels, attributes)
-  - `sample_styles_with_embeddings.csv` : Styles with precomputed vector embeddings for similarity search
-  - `sample_images/`               : Example product images used for reference
+  - `products.csv` : Raw style data (Products, Attributes)
+  - `crm.csv` : CRM data (Customers, Preferences, Loyalty)
+  - `erp.csv` : ERP data (Products, Store, Stock)
+  - `pos.csv` : POS data (Products, Transaction, Quantity)
+  - `qna.csv` : FAQ data (Category, Question Answer)
+  - `sample_images/` : Example product images used for reference
 - `How_to_combine_GPT4o_with_RAG_Outfit_Assistant.ipynb` : Jupyter notebook demonstrating end-to-end usage
 - `requirements.txt`     : List of Python dependencies
 - `README.md`            : This documentation file
@@ -51,6 +54,14 @@ You can explore and run this project in three ways:
      jupyter notebook StoreAssistant_RetailNext.ipynb
      ```
    - Use this notebook to explore the agent architecture and utility tools for Product, POS, ERP, CRM, and FAQ queries.
+
+4. Store Agent Backend
+   - Script: `model_tools.py`
+   - Run with Streamlit:
+     ```powershell
+     python model_tools.py
+     ```
+   - Use this python script to test the agent tools capabilities via the command line.
 
 3. User-Friendly UI
    - Script: `app.py`
