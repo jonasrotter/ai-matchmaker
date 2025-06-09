@@ -3,3 +3,6 @@
 
 #Ignore Environment files
 *.env
+
+#Ignore PYCache files
+__pycache__/
