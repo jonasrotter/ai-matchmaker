@@ -4,16 +4,15 @@
 This project is an AI-powered outfit recommendation assistant that combines GPT-4o with Retrieval-Augmented Generation (RAG). It uses a dataset of clothing styles, precomputed embeddings, and sample images to generate personalized outfit suggestions based on natural language queries.
 
 ## File Structure
-- `data/`
-  - `products.csv` : Raw style data (Products, Attributes)
-  - `crm.csv` : CRM data (Customers, Preferences, Loyalty)
-  - `erp.csv` : ERP data (Products, Store, Stock)
-  - `pos.csv` : POS data (Products, Transaction, Quantity)
-  - `qna.csv` : FAQ data (Category, Question Answer)
-  - `sample_images/` : Example product images used for reference
-- `How_to_combine_GPT4o_with_RAG_Outfit_Assistant.ipynb` : Jupyter notebook demonstrating end-to-end usage
-- `requirements.txt`     : List of Python dependencies
-- `README.md`            : This documentation file
+- `data/` : Sample for Customer (CRM), Styles (Product), Transactions (POS), Stock (ERP), Typical Questions (FAQ) 
+- `prompts/` : Agent’s system prompt and examples
+- `utils/` : Supporting Functions
+- `app.py`                   : Streamlit UI for interactive chat assistant
+- `model_tools.py`           : Console-based agent backend with function/tool calls
+- `How_to_combine_GPT4o_with_RAG_Outfit_Assistant.ipynb` : Foundations notebook demo
+- `StoreAssistant_RetailNext.ipynb`  : Core functionality notebook demo
+- `requirements.txt`        : Python dependencies
+- `README.md`               : Project documentation
 
 ## Setup and Installation
 1. Create a Python virtual environment (if not already present):
