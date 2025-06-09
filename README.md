@@ -4,7 +4,7 @@
 This project is an AI-powered outfit recommendation assistant that combines GPT-4o with Retrieval-Augmented Generation (RAG). It uses a dataset of clothing styles, precomputed embeddings, and sample images to generate personalized outfit suggestions based on natural language queries.
 
 ## File Structure
-- `data/` : Sample for Customer (CRM), Styles (Product), Transactions (POS), Stock (ERP), Typical Questions (FAQ) 
+- `data/` : Sample data for Customer (CRM), Styles (Product), Transactions (POS), Stock (ERP), Typical Questions (FAQ) 
 - `prompts/` : Agent’s system prompt and examples
 - `utils/` : Supporting Functions
 - `app.py`                   : Streamlit UI for interactive chat assistant
