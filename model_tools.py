@@ -224,14 +224,7 @@ def store_assistant_agent(user_query: str):
         # Model did not identify a function to call, result can be returned to the user 
         print(assistant_message.content) 
 
-if __name__ == "__main__":
-    a="Is there Wifi in the store?" #QNA-Index
-    b= "What is the stock for product 27152?" #ERP
-    b1= "In which stores is product 27152 available?" #ERP
-    c= "What is the sales summary for product 34586?" #POS
-    d= "What are the customer preferences for Alice Smith?" #CRM
-    e="Do you have blue pants for men?" #Prod-Index
-    
+if __name__ == "__main__":    
     print("Starting store assistant agent...")
     while True:
         user_input = input("You: ")
