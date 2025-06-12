@@ -22,6 +22,7 @@ from typing import List
 from dotenv import load_dotenv
 import os
 from sqlalchemy import create_engine, MetaData, Table
+import streamlit as st
 
 # Load environment variables
 load_dotenv()
@@ -177,52 +178,69 @@ tools = [{
 
 def store_assistant_agent(user_query: str):
     print(f"User query: {user_query}")
-    messages = []
-    messages.append({"role": "system", "content": SYSTEM_PROMPT})
+    #messages = []
+    #messages.append({"role": "system", "content": SYSTEM_PROMPT})
 
     # Step #1: Prompt with content that may result in function call. In this case the model can identify the information requested by the user is potentially available in the database schema passed to the model in Tools description. 
-    messages.append({"role": "user", "content": user_query})
-
+    #messages.append({"role": "user", "content": user_query})
+    st.session_state.messages.append({"role": "user", "content": user_query})
+    print(f"Messages: {st.session_state.messages}")
     response = client.chat.completions.create(
         model=GPT_MODEL,
-        messages=messages,
+        messages=st.session_state.messages,
         tools=tools,
         tool_choice="auto",
     )
 
     assistant_message = response.choices[0].message
-    messages.append(assistant_message)
+    print(f"Assistant message: {assistant_message}")
+    #messages.append({"role": "assistant", "content": assistant_message.content})
 
 
     # Step 2: determine if the response from the model includes a tool call.   
     tool_calls = assistant_message.tool_calls
+    
+    print(f"Assistant message: {tool_calls}")
     print(f"Tool calls: {tool_calls}")
     if tool_calls:
         # If true the model will return the name of the tool / function to call and the argument(s)  
         tool_call_id = tool_calls[0].id
         tool_function_name = tool_calls[0].function.name
         tool_query_string = json.loads(tool_calls[0].function.arguments)['query']
+
+        st.session_state.messages.append({"role": "assistant", "tool_calls": tool_calls, "content":tool_function_name})
         
         print(f"Tool function name: {tool_function_name}")
         print(f"Tool query string: {tool_query_string}")
+        print(f"Tool call ID: {tool_call_id}")
         results = call_function(tool_function_name, tool_query_string, engine)
         
-        messages.append({
+        st.session_state.messages.append({
             "role":"tool", 
-            "tool_call_id":tool_call_id, 
-            "name": tool_function_name, 
-            "content": results
+            "tool_call_id":tool_call_id,
+            "content": results,
+            "tool_query_string": tool_query_string,
+            "name": tool_function_name
         })
+
+
         model_response_with_function_call = client.chat.completions.create(
             model=GPT_MODEL,
-            messages=messages,
+            messages=st.session_state.messages,
+            stream=False
         ) 
-        print(f"Model Response: {model_response_with_function_call.choices[0].message.content}")
-        return model_response_with_function_call.choices[0].message.content
+        final_content = model_response_with_function_call.choices[0].message.content
+        
+        # Handle response
+        st.session_state.messages.append({"role": "assistant", "content": final_content})
+
+        print(f"Messages: {st.session_state.messages}")
+        return final_content
 
     else: 
         # Model did not identify a function to call, result can be returned to the user 
         print(assistant_message.content) 
+        
 
 if __name__ == "__main__":    
     print("Starting store assistant agent...")

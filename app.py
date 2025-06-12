@@ -36,7 +36,6 @@ uploaded_file = st.file_uploader("Upload an item image", type=["jpg", "jpeg", "p
 
 if user_input:
     # Display user message
-    st.session_state.messages.append({"role": "user", "content": user_input})
     item_descs = ""
     if uploaded_file:
         # Display the uploaded image
@@ -53,12 +52,15 @@ if user_input:
         # Show analysis results
         st.subheader("Image Analysis")
 
+    user_input = user_input + item_descs
+    #st.session_state.messages.append({"role": "user", "content": user_input})
     # Send to OpenAI with tool calling
-    response = store_assistant_agent(user_input+item_descs)
+    response = store_assistant_agent(user_input)
 
-    # Handle response
-    st.session_state.messages.append({"role": "assistant", "content": response})
 
 # After processing input, render the full chat history
-for msg in st.session_state.messages:
-    st.chat_message(msg["role"]).markdown(msg["content"])
+for m in st.session_state.messages:
+    if m["role"] == "tool":
+        st.chat_message(m["role"]).markdown(m["tool_query_string"])
+    else:
+        st.chat_message(m["role"]).markdown(m["content"])
