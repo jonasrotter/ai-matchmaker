@@ -49,7 +49,7 @@ crm_schema = get_pg_schema("crm", engine=engine)
 #products_schema = get_pg_schema("products", engine)
 
 # OpenAI Client Setup
-GPT_MODEL = "gpt-4o-mini"
+GPT_MODEL = "gpt-4.1-mini"
 EMBEDDING_MODEL = "text-embedding-3-large"
 EMBEDDING_COST_PER_1K_TOKENS = 0.00013
 #with open("prompts/systemprompt.md", "r", encoding="utf-8") as f:
