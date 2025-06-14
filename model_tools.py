@@ -241,7 +241,7 @@ def store_assistant_agent(user_query: str):
         # Model did not identify a function to call, result can be returned to the user 
         print(assistant_message.content) 
         
-
+"""
 if __name__ == "__main__":    
     print("Starting store assistant agent...")
     while True:
@@ -250,3 +250,4 @@ if __name__ == "__main__":
           break
         store_assistant_agent(user_input)
     print("Store assistant agent completed.")
+"""

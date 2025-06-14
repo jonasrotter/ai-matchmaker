@@ -21,7 +21,8 @@ EMBEDDING_MODEL = "text-embedding-3-large"
 # OpenAI Client
 client = OpenAI()
 
-with open("prompts/systemprompt_simple.md", "r", encoding="utf-8") as f:
+#with open("prompts/systemprompt_simple.md", "r", encoding="utf-8") as f:
+with open("prompts/systemprompt_advanced.md", "r", encoding="utf-8") as f:
     SYSTEM_PROMPT = f.read()
 #SYSTEM_PROMPT="Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."
 
@@ -67,5 +68,5 @@ if user_input:
 for m in st.session_state.messages:
     if m["role"] == "tool":
         st.chat_message(m["role"]).markdown(m["tool_query_string"])
-    else:
+    elif m["role"] != "system":
         st.chat_message(m["role"]).markdown(m["content"])
