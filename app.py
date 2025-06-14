@@ -21,12 +21,17 @@ EMBEDDING_MODEL = "text-embedding-3-large"
 # OpenAI Client
 client = OpenAI()
 
+with open("prompts/systemprompt_simple.md", "r", encoding="utf-8") as f:
+    SYSTEM_PROMPT = f.read()
+#SYSTEM_PROMPT="Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."
+
+
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."}
+        {"role": "system", "content": SYSTEM_PROMPT},
     ]
 
-st.title("🛍️ Retail Store Assistant")
+st.title("🛍️ RetailNext Store Assistant")
 
 # User input
 user_input = st.chat_input("Ask something about the store, customer, or product...")

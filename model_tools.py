@@ -51,10 +51,10 @@ crm_schema = get_pg_schema("crm", engine=engine)
 # OpenAI Client Setup
 GPT_MODEL = "gpt-4.1-mini"
 EMBEDDING_MODEL = "text-embedding-3-large"
-EMBEDDING_COST_PER_1K_TOKENS = 0.00013
-#with open("prompts/systemprompt.md", "r", encoding="utf-8") as f:
-#    SYSTEM_PROMPT = f.read()
-SYSTEM_PROMPT="Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."
+
+with open("prompts/systemprompt_simple.md", "r", encoding="utf-8") as f:
+    SYSTEM_PROMPT = f.read()
+#SYSTEM_PROMPT="Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."
 client = OpenAI()
 
 
